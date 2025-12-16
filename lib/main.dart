@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
-//import 'firebase_options.dart'; // Import the file generated in step 1
+import 'firebase_options.dart';
 //import 'home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     print('Failed to initialize Firebase: $e');
   }
