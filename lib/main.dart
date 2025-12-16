@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
+//import 'firebase_options.dart'; // Import the file generated in step 1
 //import 'home_page.dart';
 
 void main() async {
