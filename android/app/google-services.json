@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694581275464",
+    "project_id": "loginsignup-cejas",
+    "storage_bucket": "loginsignup-cejas.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694581275464:android:9701921e17220c670ae17d",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_7"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8UGQqahnIrKde_Qgi38JSXd-kOd8T0bc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

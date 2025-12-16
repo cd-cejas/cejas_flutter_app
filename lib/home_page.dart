@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /*void main() {
   runApp(const MyApp());
@@ -141,7 +140,7 @@ class HomePage extends StatelessWidget {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withAlpha(13), // 0.05 * 255 ≈ 13
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -201,7 +200,7 @@ class HomePage extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withAlpha(13), // 0.05 * 255 ≈ 13
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

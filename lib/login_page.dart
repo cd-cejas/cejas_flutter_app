@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_7/home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,6 +12,43 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool savePassword = false;
   bool obscure = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'An unexpected error occurred';
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Text("Email Address"),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           hintText: "Your Email Address",
                           border: OutlineInputBorder(
@@ -86,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Text("Password"),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _passwordController,
                         obscureText: obscure,
                         decoration: InputDecoration(
                           hintText: "********",
@@ -104,6 +144,15 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+
+                      if (_errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            _errorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
 
                       const SizedBox(height: 10),
                       Row(
@@ -136,17 +185,15 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Login Account",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          onPressed: _isLoading ? null : _login,
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  "Login Account",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                         ),
                       ),
 

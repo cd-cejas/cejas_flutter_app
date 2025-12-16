@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_7/home_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -8,6 +10,49 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  Future<void> _signup() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Optionally, update display name
+      await FirebaseAuth.instance.currentUser?.updateDisplayName(
+        _nameController.text.trim(),
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'An unexpected error occurred';
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +113,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Text("Your Name"),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _nameController,
                         decoration: InputDecoration(
                           hintText: "Your Name",
                           border: OutlineInputBorder(
@@ -80,6 +126,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Text("Email Address"),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           hintText: "Your Email Address",
                           border: OutlineInputBorder(
@@ -89,16 +136,27 @@ class _SignupPageState extends State<SignupPage> {
                       ),
 
                       const SizedBox(height: 15),
-                      const Text("Username"),
+                      const Text("Password"),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _passwordController,
+                        obscureText: true,
                         decoration: InputDecoration(
-                          hintText: "example1234",
+                          hintText: "********",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
+
+                      if (_errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            _errorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
 
                       const SizedBox(height: 25),
                       SizedBox(
@@ -111,11 +169,15 @@ class _SignupPageState extends State<SignupPage> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          onPressed: () {},
-                          child: const Text(
-                            "Save & Continue",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          onPressed: _isLoading ? null : _signup,
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  "Save & Continue",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                         ),
                       ),
 
